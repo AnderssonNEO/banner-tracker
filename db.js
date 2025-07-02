@@ -1,22 +1,14 @@
-const sqlite3 = require("sqlite3").verbose();
-const db = new sqlite3.Database("./clicks.db");
+require("dotenv").config();
+const { Pool } = require("pg");
 
-db.serialize(() => {
-  db.run(`
-    CREATE TABLE IF NOT EXISTS clicks (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      browser TEXT,
-      timestamp TEXT
-    )
-  `);
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl:
+    process.env.NODE_ENV === "production"
+      ? { rejectUnauthorized: false } // Required by Render
+      : false,
 });
 
-function insertClick(browser, timestamp) {
-  const stmt = db.prepare(
-    "INSERT INTO clicks (browser, timestamp) VALUES (?, ?)"
-  );
-  stmt.run(browser, timestamp);
-  stmt.finalize();
-}
-
-module.exports = { insertClick };
+module.exports = {
+  query: (text, params) => pool.query(text, params),
+};

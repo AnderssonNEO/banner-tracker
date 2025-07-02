@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Click Tracker</title>
+  </head>
+  <body>
+    <button id="track-btn">Click me!</button>
+
+    <script>
+      const button = document.getElementById("track-btn");
+      button.addEventListener("click", () => {
+        fetch("/click", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            elementId: "track-btn",
+            timestamp: new Date().toISOString(),
+            userAgent: navigator.userAgent,
+          }),
+        })
+          .then((res) => res.json())
+          .then((data) => console.log(data))
+          .catch(console.error);
+      });
+    </script>
+  </body>
+</html>
