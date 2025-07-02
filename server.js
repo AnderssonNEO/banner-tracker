@@ -2,12 +2,14 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const path = require("path");
 const db = require("./db"); // PostgreSQL module
+const cors = require("cors");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, "public")));
+app.use(cors());
 
 // Save click to PostgreSQL
 app.post("/click", async (req, res) => {
